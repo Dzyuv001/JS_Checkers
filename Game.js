@@ -1,15 +1,15 @@
 var turn = true; // who's turn it is.
-var player1 = 12, player2 = 12;
-var aiDifficulty;
-var previewIds = [];
-var attacked = [];
-var yCoor, xCoor;
-var matricsX = [-1, 1];
-var matricsY = [-1, 1];
-var preView;
+var player1 = 12, player2 = 12; // used to check if player has removed the enemy checkers
+var aiDifficulty; // Ai dificulty level 
+var previewIds = []; // stores the possible momvent locations
+var attacked = []; // stores the elments on the baord that will be attacked and removed 
+var yCoor, xCoor; //stores the current x and y of selected checker
+var checkClass = "";// stores the class of selected checker 
+var matricsX = [-1, 1]; // movment matreis for the x axis 
+var matricsY = [-1, 1]; // movment matreis for the y axis 
 
-function changeTurn() {
-    turn != turn;
+function changeTurn() { //
+    turn = !turn;
 }
 
 function makeMove(y, x) {
@@ -17,13 +17,14 @@ function makeMove(y, x) {
     cleanUp();
     yCoor = y;
     xCoor = x;
+    checkClass = $("#c" + y + "_" + x).children().attr("class");
     getPossibleMoves(y, x);
     movePreview();
 }
 
-function checkTeam() {
+// function checkTeam() {
 
-}
+// }
 
 function checkTeam(y, x) {
     if (((shortId(y, x).find(".chkw").length !== 0 || shortId(y, x).find(".chkW").length !== 0) && turn) ||
@@ -46,35 +47,32 @@ function checkType(y, x) {
 
 function getPossibleMoves(y, x) { //used to create an array of possible moves 
     if (checkTeam(y, x)) {
-        var chekerType;
-        switch (checkType(y, x)) {
-            case 0:
-                for (var i = 0; i < 2; i++) {
-                    if (isOnBoard(y + matricsY[0], x + matricsX[i])) {
-                        previewIds.push([y + matricsY[0], x + matricsX[i]]);
-                    } else if (isOnBoard(y + matricsY[0] * 2, x + matricsX[i] * 2)) {
-                        previewIds.push([y + matricsY[0] * 2, x + matricsX[i] * 2]);
-                        attacked.push([y + matricsY[0], x + matricsX[i]]);
+        var chekerType = checkType(y, x);
+        if (chekerType < 2) {
+            for (var i = 0; i < 2; i++) {
+                if (isOnBoard(y + matricsY[chekerType], x + matricsX[i])) {
+                    previewIds.push([y + matricsY[chekerType], x + matricsX[i]]);
+                } else if (isOnBoard(y + matricsY[chekerType] * 2, x + matricsX[i] * 2)) {
+                    previewIds.push([y + matricsY[chekerType] * 2, x + matricsX[i] * 2]);
+                    attacked.push([y + matricsY[chekerType], x + matricsX[i]]);
+                }
+            }
+        } else {
+            for (var i = 0; i < 2; i++) {
+                for (var j = 0; j < chekerType; j++) {
+                    if (isOnBoard(y + matricsY[i], x + matricsX[j])) {
+                        previewIds.push([y + matricsY[i], x + matricsX[j]]);
+                    } else if (isOnBoard(y + matricsY[i] * 2, x + matricsX[j] * 2)) {
+                        previewIds.push([y + matricsY[i] * 2, x + matricsX[j] * 2]);
+                        attacked.push([y + matricsY[i], x + matricsX[j]]);
                     }
                 }
-                break;
-            case 1:
-                for (var i = 0; i < 2; i++) {
-                    if (isOnBoard(y + matricsY[1], x + matricsX[i])) {
-                        previewIds.push([y + matricsY[1], x + matricsX[i]]);
-                    } else if (isOnBoard(y + matricsY[1] * 2, x + matricsX[i] * 2)) {
-                        previewIds.push([y + matricsY[1] * 2, x + matricsX[i] * 2]);
-                        attacked.push([y + matricsY[1], x + matricsX[i]]);
-                    }
-                }
-                break;
-            case 2:
-                break;
+            }
         }
     }
 }
 
-// function checkType() {
+// function checkType(y,x) {
 //     var divC = shortId(y, x).className.charAt(3);
 //     if (divC == "w" || divC == "b" || divC == "G") {
 //         return "●";
@@ -84,7 +82,7 @@ function getPossibleMoves(y, x) { //used to create an array of possible moves
 // }
 
 function actMove(y, x) { //enacts the move
-    $("#c" + y + "_" + x).append("<div class=\"chkw\" onclick=\"makeMove(" + y + "," + x + ")\">●</div>");
+    $("#c" + y + "_" + x).append("<div class=" + checkClass + " onclick=\"makeMove(" + y + "," + x + ")\">●</div>");
     cleanUp();
     $("#c" + yCoor + "_" + xCoor).empty();
     clearPreview();

@@ -39,10 +39,12 @@ for (var i = 0; i < 8; i++) {
         $("#board").append(board[0] + "\"c" + i + "_" + j + "\"" + colourPick() + board[1]);
         if (!boardColour) {
             if (i > -1 && i < 3) {
-                $(String("#c" + i + "_" + j+"")).append("<div class=\"chkb\" onclick=\"makeMove(" + i + "," + j + ")\">●</div>");
+                $("#c" + i + "_" + j + "")
+                .append("<div class=\"chkb\" onclick=\"makeMove(" + i + "," + j + ")\">●</div>");
             }
             if (i > 4) {
-                $("#c" + i + "_" + j+"").append("<div class=\"chkw\" onclick=\"makeMove("+i+","+j+")\">●</div>");
+                $(String("#c" + i + "_" + j + ""))
+                .append("<div class=\"chkw\" onclick=\"makeMove(" + i + "," + j + ")\">●</div>");
             }
         }
     }

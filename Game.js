@@ -1,5 +1,6 @@
 var turn = true; // who's turn it is.
-var player1 = 12, player2 = 12; // used to check if player has removed the enemy checkers
+var isGameEnded = false; // has the game ended
+var player1 = 1, player2 = 1; // used to check if player has removed the enemy checkers
 var aiDifficulty; // Ai dificulty level 
 var previewIds = []; // stores the possible momvent locations
 var attacked = []; // stores the elments on the baord that will be attacked and removed 
@@ -12,18 +13,17 @@ function changeTurn() { //used to change turn
     turn = !turn;
 }
 
-function makeMove(y, x) {
-    clearPreview();
-    cleanUp();
-    yCoor = y;
-    xCoor = x;
-    checkClass = $("#c" + y + "_" + x).children().attr("class");
-    getPossibleMoves(y, x);
-    movePreview();
+function makeMove(y, x) {// used to set up the check for movement
+    if (!isGameEnded) {
+        clearPreview();
+        cleanUp();
+        yCoor = y;
+        xCoor = x;
+        checkClass = $("#c" + y + "_" + x).children().attr("class");
+        getPossibleMoves(y, x);
+        movePreview();
+    }
 }
-
-// function checkTeam() {
-// }
 
 function checkTeam(y, x) {// check what team's checker is being pressed
     if (((shortId(y, x).find(".chkw").length !== 0 || shortId(y, x).find(".chkW").length !== 0) && turn) ||
@@ -86,6 +86,7 @@ function actMove(y, x) { //enacts the move
     clearPreview();
     attack();
     upgrade(y, x);
+    checkWin();
     changeTurn();
 }
 
@@ -130,7 +131,7 @@ function attack() { // will be used to remove enemy checkers and increment the p
     for (var i = 0; i <= attacked.length - 1; i++) {
         $("#c" + attacked[i][0] + "_" + attacked[i][1]).empty();
         player2--;
-        attacked=[];
+        attacked = [];
     }
 }
 
@@ -151,6 +152,24 @@ function upgrade(y, x) { //will upgrade a regular cheker
             shortId(y, x).empty();
             shortId(y, x).append("<div class=" + checkClass.substring(0, 3) +
                 divClass.toUpperCase() + " onclick=\"makeMove(" + y + "," + x + ")\">⍟</div>");
+        }
+    }
+}
+
+function updateScoreBoard() {// update score board
+    $("#lblGameScore").text((12 - player1) + " - " + (12 - player1));
+}
+
+function checkWin() { //check if a player has won 
+    if (turn) {
+        if (player2 == 0) {
+            $("#lblVict").text("Player 1 has won");
+            isGameEnded = true;
+        }
+    } else {
+        if (player1 == 0) {
+            $("#lblVict").text("Player 2 has won");
+            isGameEnded = true;
         }
     }
 }

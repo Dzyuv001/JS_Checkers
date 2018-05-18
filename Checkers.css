@@ -71,27 +71,19 @@ button {
     margin-left: -10%;
 }
 
-.chkW, .chkB, {
+.chkW, .chkB {
     font-size: 4em;
     margin-top: -10%;
 }
 
-.chkb {
-    color: #888;
+.chkb, .chkB {
+    color: #555;
 }
 
-.chkw {
-    color: #CCC
+.chkw ,.chkW  {
+    color: #ddd;
 }
 
 .chkG {
-    color: #0D0
-}
-
-.chkB {
-    color: #888;
-}
-
-.chkW {
-    color: #CCC
+    color: #0D0;
 }

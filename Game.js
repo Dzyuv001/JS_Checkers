@@ -8,7 +8,7 @@ var checkClass = "";// stores the class of selected checker
 var matricsX = [-1, 1]; // movment matreis for the x axis 
 var matricsY = [-1, 1]; // movment matreis for the y axis 
 
-function changeTurn() { //
+function changeTurn() { //used to change turn
     turn = !turn;
 }
 
@@ -23,10 +23,9 @@ function makeMove(y, x) {
 }
 
 // function checkTeam() {
-
 // }
 
-function checkTeam(y, x) {
+function checkTeam(y, x) {// check what team's checker is being pressed
     if (((shortId(y, x).find(".chkw").length !== 0 || shortId(y, x).find(".chkW").length !== 0) && turn) ||
         ((shortId(y, x).find(".chkb").length !== 0 || shortId(y, x).find(".chkB").length !== 0) && !turn)) {
         return true;
@@ -35,7 +34,7 @@ function checkTeam(y, x) {
     }
 }
 
-function checkType(y, x) {
+function checkType(y, x) {//check what type of checker was selected
     if (shortId(y, x).find(".chkw").length !== 0) {
         return 0;
     } else if (shortId(y, x).find(".chkb").length !== 0) {
@@ -72,21 +71,21 @@ function getPossibleMoves(y, x) { //used to create an array of possible moves
     }
 }
 
-// function checkType(y,x) {
-//     var divC = shortId(y, x).className.charAt(3);
-//     if (divC == "w" || divC == "b" || divC == "G") {
-//         return "●";
-//     } else {
-//         return "⍟";
-//     }
-// }
-
 function actMove(y, x) { //enacts the move
-    $("#c" + y + "_" + x).append("<div class=" + checkClass + " onclick=\"makeMove(" + y + "," + x + ")\">●</div>");
+    var divClass = checkClass.charAt(3);
+    var checkerType = "";
+    if (divClass !== divClass.toUpperCase()) {
+        checkerType = "●";
+    } else {
+        checkerType = "⍟";
+    }
+    $("#c" + y + "_" + x).append("<div class=" + checkClass +
+        " onclick=\"makeMove(" + y + "," + x + ")\">" + checkerType + "</div>");
     cleanUp();
     $("#c" + yCoor + "_" + xCoor).empty();
     clearPreview();
     attack();
+    upgrade(y, x);
     changeTurn();
 }
 
@@ -100,19 +99,27 @@ function clearPreview() {//clear the preview array
 
 function movePreview() {// draw the preview move locations
     for (var i = 0; i < previewIds.length; i++) {
-        $("#c" + previewIds[i][0] + "_" + previewIds[i][1]).append("<div class=\"chkG\" onclick=\"actMove(" + previewIds[i][0] + "," + previewIds[i][1] + ")\">●</div>");
+        $("#c" + previewIds[i][0] + "_" +
+            previewIds[i][1]).append("<div class=\"chkG\" onclick=\"actMove(" +
+                previewIds[i][0] + "," + previewIds[i][1] + ")\">●</div>");
     }
 }
 
 function isOnBoard(preY, preX) { // used to check if a move will be on the board
-    if (-1 < preX && preX < 7 || -1 < preY && preY < 7) {
+    if (-1 < preX && preX < 8 || -1 < preY && preY < 8) {
         return isCoordClear(preY, preX);
     }
     return false;
 }
 
 function isCoordClear(y, x) {// heck if the coordiante on the baord is clear
-    if (shortId(y, x).find(".chkB").length == 0) {
+    var chks = [];
+    if (turn) {
+        chks.push(".chkB", ".chkb");
+    } else {
+        chks.push(".chkW", ".chkw");
+    }
+    if ((shortId(y, x).find(chks[0]).length == 0) && (shortId(y, x).find(chks[1]).length == 0)) {
         return true;
     } else {
         return false;
@@ -123,6 +130,7 @@ function attack() { // will be used to remove enemy checkers and increment the p
     for (var i = 0; i <= attacked.length - 1; i++) {
         $("#c" + attacked[i][0] + "_" + attacked[i][1]).empty();
         player2--;
+        attacked=[];
     }
 }
 
@@ -131,11 +139,18 @@ function shortId(y, x) { //used to clea-up element id location
 }
 
 function upgrade(y, x) { //will upgrade a regular cheker
-    var id = shortId(y, x);
-    var divClass = id.className.charAt(3);
-    if (divClass === divClass.toUpperCase()) {
-        if (-1 < preX && preX < 7 || y == 0) {
-            id.removeClass(id.className).addClass(id.className.substring(0, 2) + divClass.toUpperCase);
+    var divClass = checkClass.charAt(3);
+    var yArea;
+    if (turn) {
+        yArea = 0;
+    } else {
+        yArea = 7;
+    }
+    if (divClass !== divClass.toUpperCase()) {
+        if (-1 < x && x < 7 && y == yArea) {
+            shortId(y, x).empty();
+            shortId(y, x).append("<div class=" + checkClass.substring(0, 3) +
+                divClass.toUpperCase() + " onclick=\"makeMove(" + y + "," + x + ")\">⍟</div>");
         }
     }
 }

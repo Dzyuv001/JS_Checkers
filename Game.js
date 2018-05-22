@@ -8,6 +8,7 @@ var yCoor, xCoor; //stores the current x and y of selected checker
 var checkClass = "";// stores the class of selected checker 
 var matricsX = [-1, 1]; // movment matreis for the x axis 
 var matricsY = [-1, 1]; // movment matreis for the y axis 
+var moveTree; // 
 
 function changeTurn() { //used to change turn
     turn = !turn;
@@ -69,6 +70,30 @@ function getPossibleMoves(y, x) { //used to create an array of possible moves
             }
         }
     }
+}
+
+function attackMoves(parent, chkType) { // recursive attack computation
+    var node;
+    var childNodes= [];
+    var attackedNode = [];
+    if (chekerType < 2) {
+        for (var i = 0; i < 2; i++) {
+            if (isOnBoard(y + matricsY[chekerType], x + matricsX[i])) {
+
+            }
+        }
+    } else {
+        for (var i = 0; i < 2; i++) {
+            for (var j = 0; j < chekerType; j++) {
+                if (isOnBoard(y + matricsY[chekerType] * 2, x + matricsX[i] * 2)) {
+                    if (String(parent) !== String(i + "" + j)) { // checks 
+
+                    }
+                }
+            }
+        }
+    }
+    node = Node(childNodes, parent, attackedNode);
 }
 
 function actMove(y, x) { //enacts the move

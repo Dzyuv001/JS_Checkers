@@ -1,25 +1,33 @@
-class Node {
-    constructor(children, parent, chkAttacked, chkType) {
-        this.children[][] = children[][];// stores the children nodes coords 
-        this.parent[] = parent[];// stores the parent nodes coords
-        this.chkAttacked[] = chkAttacked[];// stores the attacked nodes coords
-        this.chkType[] = chkType[];
+class NodeTree {
+    constructor(parent, chkAttacked, chkType, coords) {
+        this.children = [];
+        this.parent = parent;// stores the parent node coords
+        this.chkAttacked = chkAttacked;// stores the attacked nodes coords
+        this.chkType = chkType;
+        this.coords = coords;
     }
 
-    getParent() { // returns the parent node's coords
-        return parent[];
+    setChild(node) {// adds a child node
+        this.children.push(node);
     }
 
-    getChildren() { // returns the children nodes' coords
-        return children[][];
+    getCoords() {
+        return this.coords; // returns the node coordiantes 
+    }
+
+    getParent() { // returns the parent node
+        return this.parent;
+    }
+
+    getChildren() { // returns the children nodes 
+        return this.children;
     }
 
     getChkAttacked() {// retuns the coords that was attacked 
-        return chkAttacked[];
+        return this.chkAttacked;
     }
 
-    getChkType() {
-        return chkType[];
+    getChkType() {// returns the type of checker
+        return this.chkType;
     }
-
 }

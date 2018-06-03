@@ -8,7 +8,7 @@ var yCoor, xCoor; //stores the current x and y of selected checker
 var checkClass = "";// stores the class of selected checker 
 var matricsX = [-1, 1]; // movment matreis for the x axis 
 var matricsY = [-1, 1]; // movment matreis for the y axis 
-var moveTree; // 
+var moveTree; // root if tree
 
 function changeTurn() { //used to change turn
     turn = !turn;
@@ -53,8 +53,7 @@ function getPossibleMoves(y, x) { //used to create an array of possible moves
                 if (isOnBoard(y + matricsY[chekerType], x + matricsX[i])) {
                     previewIds.push([y + matricsY[chekerType], x + matricsX[i]]);
                 } else if (isOnBoard(y + matricsY[chekerType] * 2, x + matricsX[i] * 2)) {
-                    previewIds.push([y + matricsY[chekerType] * 2, x + matricsX[i] * 2]);
-                    attacked.push([y + matricsY[chekerType], x + matricsX[i]]);
+                    moveTree = attackMoves(null, chekerType, [y, x], [y + matricsY[chekerType], x + matricsX[i]]);
                 }
             }
         } else {
@@ -63,8 +62,7 @@ function getPossibleMoves(y, x) { //used to create an array of possible moves
                     if (isOnBoard(y + matricsY[i], x + matricsX[j])) {
                         previewIds.push([y + matricsY[i], x + matricsX[j]]);
                     } else if (isOnBoard(y + matricsY[i] * 2, x + matricsX[j] * 2)) {
-                        previewIds.push([y + matricsY[i] * 2, x + matricsX[j] * 2]);
-                        attacked.push([y + matricsY[i], x + matricsX[j]]);
+                        moveTree = attackMoves(null, chekerType, [y, x], [y + matricsY[chekerType], x + matricsX[i]]);
                     }
                 }
             }
@@ -72,28 +70,29 @@ function getPossibleMoves(y, x) { //used to create an array of possible moves
     }
 }
 
-function attackMoves(parent, chkType) { // recursive attack computation
-    var node;
-    var childNodes= [];
+function attackMoves(parent, chkT, c, a) { // recursive attack computation c=cooords , a=attacked
+    var node = new NodeTree(parent, a, chkT, c)
+    var childNode = [];
     var attackedNode = [];
-    if (chekerType < 2) {
+    if (chkT < 2) {
         for (var i = 0; i < 2; i++) {
-            if (isOnBoard(y + matricsY[chekerType], x + matricsX[i])) {
-
+            if (isOnBoard(c[0] + matricsY[chkT] * 2, c[1] + matricsX[i]) * 2) {
+                node.setChild(attackMoves(node, chkT, [c[0] + matricsY[chkT] * 2, c[1] + matricsX[i] * 2], [c[0] + matricsY[chkT], c[1] + matricsX[i]]));
+                alert(c);
             }
         }
     } else {
         for (var i = 0; i < 2; i++) {
-            for (var j = 0; j < chekerType; j++) {
-                if (isOnBoard(y + matricsY[chekerType] * 2, x + matricsX[i] * 2)) {
+            for (var j = 0; j < chkT; j++) {
+                if (isOnBoard(c[0] + matricsY[chekerType] * 2, c[1] + matricsX[i] * 2)) {
                     if (String(parent) !== String(i + "" + j)) { // checks 
-
+                       node.setChild(attackMoves(node, chkT, [c[0] + matricsY[j] * 2, c[1] + matricsX[i] * 2], [c[0] + matricsY[j], c[1] + matricsX[i]]));
                     }
                 }
             }
         }
     }
-    node = Node(childNodes, parent, attackedNode);
+    return node;
 }
 
 function actMove(y, x) { //enacts the move
@@ -129,7 +128,15 @@ function movePreview() {// draw the preview move locations
             previewIds[i][1]).append("<div class=\"chkG\" onclick=\"actMove(" +
                 previewIds[i][0] + "," + previewIds[i][1] + ")\">●</div>");
     }
+    //drawTree();
 }
+
+function drawTree() { // migrating to tree
+    $("#c" + previewIds[i][0] + "_" +
+        previewIds[i][1]).append("<div class=\"chkG\" onclick=\"actMove(" +
+            previewIds[i][0] + "," + previewIds[i][1] + ")\">●</div>");
+}
+
 
 function isOnBoard(preY, preX) { // used to check if a move will be on the board
     if (-1 < preX && preX < 8 || -1 < preY && preY < 8) {
@@ -198,3 +205,4 @@ function checkWin() { //check if a player has won
         }
     }
 }
+
